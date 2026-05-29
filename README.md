@@ -8,7 +8,8 @@ To use it, to go the link: `https://erallie.github.io/Seasonal-Time-Converter/?t
 For example, if you want to display 1pm in Arizona time, you would do:
 - `https://erallie.github.io/Seasonal-Time-Converter/?t=13:00&tz=America/Phoenix`
 
-You can *also* go to this page in order to generate a link more easily: https://erallie.github.io/Seasonal-Time-Converter/generator.html
+You can *also* go to this page in order to generate a link more easily:
+- https://erallie.github.io/Seasonal-Time-Converter/generator.html
 
 ~~For now, this is only limited to Arizona. But in the future, I may change it so that it can use any time zone. Depending on popular demand.~~
 
