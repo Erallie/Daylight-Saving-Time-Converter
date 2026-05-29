@@ -146,7 +146,11 @@
 
 		const timezone = document.getElementById("timezone").value;
 
-		const baseURL = "converter.html";
+	    // Remove "generator.html" from the path
+        const path = window.location.pathname;
+        const basePath = path.substring(0, path.lastIndexOf("/") + 1);
+
+        const baseURL = window.location.origin + basePath;
 
 		const url =
 			`${baseURL}?t=${encodeURIComponent(time)}&tz=${encodeURIComponent(timezone)}`;
