@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Generate Time Converter Link</title>
+
+	<script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/moment-timezone@0.5.45/builds/moment-timezone-with-data.min.js"></script>
+
+	<style>
+		body {
+			margin: 0;
+			height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #0f0f0f;
+			color: white;
+			font-family: Arial, sans-serif;
+		}
+
+		.box {
+			background: #1c1c1c;
+			padding: 30px;
+			border-radius: 12px;
+			width: 550px;
+		}
+
+		h2 {
+			margin-top: 0;
+		}
+
+		.field {
+			margin-bottom: 20px;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 8px;
+			color: #aaa;
+			font-size: 14px;
+		}
+
+		input,
+		select {
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		input[type="time"],
+		select {
+			padding: 10px;
+			border: none;
+			border-radius: 8px;
+			background: #2a2a2a;
+			color: white;
+			font-size: 16px;
+		}
+
+		select {
+			height: 44px;
+		}
+
+		button {
+			width: 100%;
+			padding: 12px;
+			border: none;
+			border-radius: 8px;
+			background: #60a5fa;
+			color: white;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		button:hover {
+			opacity: 0.9;
+		}
+
+		.result {
+			margin-top: 20px;
+			padding: 12px;
+			background: #2a2a2a;
+			border-radius: 8px;
+			word-break: break-all;
+		}
+
+		a {
+			color: #93c5fd;
+		}
+	</style>
+</head>
+<body>
+
+<div class="box">
+	<h2>Generate Time Converter Link</h2>
+
+	<div class="field">
+		<label for="time">Time</label>
+		<input type="time" id="time" value="13:00">
+	</div>
+
+	<div class="field">
+		<label for="timezone">Timezone</label>
+		<select id="timezone"></select>
+	</div>
+
+	<button onclick="generateLink()">Generate Link</button>
+
+	<div class="result" id="result" style="display:none;"></div>
+</div>
+
+<script>
+	// ----------------------------------------
+	// Get all timezone identifiers
+	// ----------------------------------------
+
+	const zones = moment.tz.names();
+
+	const select = document.getElementById("timezone");
+
+	// ----------------------------------------
+	// Populate dropdown
+	// ----------------------------------------
+
+	for (const zone of zones) {
+		const option = document.createElement("option");
+
+		option.value = zone;
+		option.textContent = zone;
+
+		select.appendChild(option);
+	}
+
+	// ----------------------------------------
+	// Default to user's timezone
+	// ----------------------------------------
+
+	select.value = moment.tz.guess();
+
+	// ----------------------------------------
+	// Generate link
+	// ----------------------------------------
+
+	function generateLink() {
+		const time = document.getElementById("time").value;
+
+		const timezone = document.getElementById("timezone").value;
+
+		const baseURL = "converter.html";
+
+		const url =
+			`${baseURL}?t=${encodeURIComponent(time)}&tz=${encodeURIComponent(timezone)}`;
+
+		const result = document.getElementById("result");
+
+		result.style.display = "block";
+
+		result.innerHTML = `
+			<div><strong>Generated Link:</strong></div>
+
+			<div style="margin-top:10px;">
+				<a href="${url}" target="_blank">${url}</a>
+			</div>
+		`;
+	}
+</script>
+
+</body>
+</html>

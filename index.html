@@ -70,6 +70,20 @@
 			border: 2px solid #60a5fa;
 			box-shadow: 0 0 12px rgba(96, 165, 250, 0.35);
 		}
+        .generator {
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.5);
+            /* font-style: italic; */
+            font-size: 0.8em;
+        }
+        a {
+            color: rgba(255, 255, 255, 0.75);
+            &:hover {
+                color: white;
+            }
+        }
 	</style>
 </head>
 <body>
@@ -93,6 +107,8 @@
             <div class="value" id="summer"></div>
         </div>
     </div>
+
+    <div class="generator"><a href="/generator.html">Click here</a> to generate a time.</div>
 </div>
 
 <script>
