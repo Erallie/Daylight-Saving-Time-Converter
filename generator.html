@@ -82,16 +82,70 @@
 		}
 
 		.result {
-			margin-top: 20px;
-			padding: 12px;
-			background: #2a2a2a;
-			border-radius: 8px;
-			word-break: break-all;
-		}
+            margin-top: 20px;
+            display: none;
+        }
 
-		a {
-			color: #93c5fd;
-		}
+        .copy-box {
+            position: relative;
+            margin-top: 10px;
+            padding: 12px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            cursor: pointer;
+            word-break: break-all;
+            transition: background 0.2s;
+            color: #d4d4d4;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .copy-box:hover {
+            background: #353535;
+        }
+
+        .copy-icon {
+            flex-shrink: 0;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .copy-box:hover .copy-icon {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        #generatedLink {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #d4d4d4;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
 
         @media (max-width: 600px) {
             .box {
@@ -131,7 +185,21 @@
 
 	<button onclick="generateLink()">Generate Link</button>
 
-	<div class="result" id="result" style="display:none;"></div>
+	<div class="result" id="result">
+        <div><strong>Generated Link:</strong></div>
+
+        <div
+            class="copy-box"
+            id="copyBox"
+            onclick="copyLink()"
+        >
+            <div class="tooltip" id="tooltip">Copied to clipboard</div>
+
+            <code id="generatedLink"></code>
+
+            <span class="copy-icon">📋</span>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -167,31 +235,38 @@
 	// ----------------------------------------
 
 	function generateLink() {
-		const time = document.getElementById("time").value;
+        const time = document.getElementById("time").value;
+        const timezone = document.getElementById("timezone").value;
 
-		const timezone = document.getElementById("timezone").value;
-
-	    // Remove "generator.html" from the path
         const path = window.location.pathname;
         const basePath = path.substring(0, path.lastIndexOf("/") + 1);
 
         const baseURL = window.location.origin + basePath;
 
-		const url =
-			`${baseURL}?t=${encodeURIComponent(time)}&tz=${encodeURIComponent(timezone)}`;
+        const url =
+            `${baseURL}?t=${encodeURIComponent(time)}&tz=${encodeURIComponent(timezone)}`;
 
-		const result = document.getElementById("result");
+        document.getElementById("generatedLink").textContent = url;
+        document.getElementById("result").style.display = "block";
+    }
 
-		result.style.display = "block";
+    async function copyLink() {
+        const text = document.getElementById("generatedLink").textContent;
 
-		result.innerHTML = `
-			<div><strong>Generated Link:</strong></div>
+        try {
+            await navigator.clipboard.writeText(text);
 
-			<div style="margin-top:10px;">
-				<a href="${url}" target="_blank">${url}</a>
-			</div>
-		`;
-	}
+            const tooltip = document.getElementById("tooltip");
+
+            tooltip.classList.add("show");
+
+            setTimeout(() => {
+                tooltip.classList.remove("show");
+            }, 2000);
+        } catch (err) {
+            console.error(err);
+        }
+    }
 </script>
 
 </body>
