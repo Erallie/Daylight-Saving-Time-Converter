@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Seasonal Time Converter</title>
+    <meta name="description" content="This tool is a webpage that displays a timestamp from one timezone in the user's local time, accounting for daylight saving time. This means it takes the timestamp and the displays it in both daylight time and standard time, according to the user's local timezone.">
 
 	<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 
@@ -21,7 +22,6 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-
 
         .box {
             background: #1c1c1c;
@@ -94,6 +94,11 @@
             color: white;
         }
 
+
+        .hidden {
+            display: none;
+        }
+
         @media (max-width: 600px) {
             .box {
                 padding: 20px;
@@ -115,7 +120,37 @@
 </head>
 <body>
 
-<div class="box">
+<div id="noTimezonePage" class="box hidden">
+    <h1>Seasonal Time Converter</h1>
+    <p>Share event times without worrying about time zones.</p>
+
+    <p>This tool lets you create a link that always displays an event in the viewer's own local time while accounting for the difference between Daylight Saving Time and standard time. It's especially useful for online events hosted in places that don't observe Daylight Saving Time, such as Arizona.</p>
+    <h2>How it works</h2>
+    <p>When someone opens a generated link, they’ll see:</p>
+
+    <ul>
+        <li>The original event time.</li>
+        <li>The equivalent time during the winter months (November–March).</li>
+        <li>The equivalent time during the summer months (March–November).</li>
+    </ul>
+
+    <p>The current season is highlighted automatically, making it easy to see which time applies today.</p>
+    <h2>Create your own link</h2>
+    <p>To generate a shareable link, visit the <a href="generator.html" target="_blank"><strong>/generator</strong></a> page.</p>
+
+    <p>Simply enter:</p>
+
+    <ul>
+        <li>The event time.</li>
+        <li>The event's time zone.</li>
+    </ul>
+
+    <p>The generator will create a URL that you can copy and send to anyone. When they open it, the page will automatically convert the event time for their location and clearly show which seasonal time is currently in effect.</p>
+
+    <p>Whether you're organizing a livestream, virtual meeting, gaming event, or community gathering, this makes sharing times much easier—without requiring everyone to manually calculate time zone differences.</p>
+</div>
+
+<div id="converterPage" class="box hidden">
 	<h2>Seasonal Time Converter</h2>
 
 	<div class="section">
@@ -141,71 +176,65 @@
 <script>
 	const { DateTime } = luxon;
 
-	function getTimeFromURL() {
-		const p = new URLSearchParams(window.location.search);
-		return p.get("t") || "13:00";
-	}
+	const params = new URLSearchParams(window.location.search);
+	const hasTimezone = params.has("tz") && params.get("tz").trim() !== "";
 
-	function getZoneFromURL() {
-		const p = new URLSearchParams(window.location.search);
-		return p.get("tz") || "America/Phoenix";
-	}
-
-	function parseTime(t) {
-		const [h, m] = t.split(":").map(Number);
-		return { h, m };
-	}
-
-	function formatTime(dateObj) {
-		return DateTime.fromJSDate(dateObj).toFormat("h:mm a");
-	}
-
-	const input = getTimeFromURL();
-	const fromZone = getZoneFromURL();
-	const { h, m } = parseTime(input);
-
-	const phoenixZone = "America/Phoenix";
-
-	// interpret input time in the selected source timezone
-	const sourceDate = DateTime.fromObject(
-		{ year: 2024, month: 1, day: 15, hour: h, minute: m },
-		{ zone: fromZone }
-	);
-
-	// convert that same moment into Arizona winter/summer display contexts
-	const winter = sourceDate.setZone(phoenixZone).toJSDate();
-
-	const summer = DateTime.fromObject(
-		{ year: 2024, month: 7, day: 15, hour: h, minute: m },
-		{ zone: fromZone }
-	)
-	.setZone(phoenixZone)
-	.toJSDate();
-
-	const inputDisplay = DateTime.fromObject(
-		{ year: 2024, month: 1, day: 1, hour: h, minute: m },
-		{ zone: fromZone }
-	).toFormat("h:mm a");
-
-	document.getElementById("input").innerText = `${inputDisplay}`;
-	document.getElementById("inputLabel").innerText = `Time for ${fromZone}`;
-	document.getElementById("winter").innerText = formatTime(winter);
-	document.getElementById("summer").innerText = formatTime(summer);
-
-	// ---------------------------
-	// Highlight ONLY the active result box
-	// ---------------------------
-	function getActiveSeason() {
-		const month = new Date().getMonth() + 1;
-		return (month >= 3 && month < 11) ? "summer" : "winter";
-	}
-
-	const active = getActiveSeason();
-
-	if (active === "winter") {
-		document.getElementById("winterBox").classList.add("active");
+	if (!hasTimezone) {
+		document.getElementById("noTimezonePage").classList.remove("hidden");
 	} else {
-		document.getElementById("summerBox").classList.add("active");
+		document.getElementById("converterPage").classList.remove("hidden");
+
+		// Your existing JavaScript goes here
+		const input = params.get("t") || "13:00";
+		const fromZone = params.get("tz");
+
+		function parseTime(t) {
+			const [h, m] = t.split(":").map(Number);
+			return { h, m };
+		}
+
+		function formatTime(dateObj) {
+			return DateTime.fromJSDate(dateObj).toFormat("h:mm a");
+		}
+
+		const { h, m } = parseTime(input);
+
+		const phoenixZone = "America/Phoenix";
+
+		const sourceDate = DateTime.fromObject(
+			{ year: 2024, month: 1, day: 15, hour: h, minute: m },
+			{ zone: fromZone }
+		);
+
+		const winter = sourceDate.setZone(phoenixZone).toJSDate();
+
+		const summer = DateTime.fromObject(
+			{ year: 2024, month: 7, day: 15, hour: h, minute: m },
+			{ zone: fromZone }
+		)
+		.setZone(phoenixZone)
+		.toJSDate();
+
+		const inputDisplay = DateTime.fromObject(
+			{ year: 2024, month: 1, day: 1, hour: h, minute: m },
+			{ zone: fromZone }
+		).toFormat("h:mm a");
+
+		document.getElementById("input").innerText = inputDisplay;
+		document.getElementById("inputLabel").innerText = `Time for ${fromZone}`;
+		document.getElementById("winter").innerText = formatTime(winter);
+		document.getElementById("summer").innerText = formatTime(summer);
+
+		function getActiveSeason() {
+			const month = new Date().getMonth() + 1;
+			return (month >= 3 && month < 11) ? "summer" : "winter";
+		}
+
+		if (getActiveSeason() === "winter") {
+			document.getElementById("winterBox").classList.add("active");
+		} else {
+			document.getElementById("summerBox").classList.add("active");
+		}
 	}
 </script>
 
