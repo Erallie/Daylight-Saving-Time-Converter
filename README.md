@@ -15,6 +15,6 @@ For example, if you want to display 1pm in Arizona time, you would do:
 - `https://erallie.github.io/Seasonal-Time-Converter/?t=13:00&tz=America/Phoenix`
 
 You can *also* go to this page in order to generate a link more easily:
-- https://erallie.github.io/Seasonal-Time-Converter/generator.html
+- https://erallie.github.io/Daylight-Saving-Time-Converter/generator.html
 
 Feel free to use whenever!
