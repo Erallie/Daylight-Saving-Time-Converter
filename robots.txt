@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://erallie.github.io/Seasonal-Time-Converter/sitemap.xml
+Sitemap: https://erallie.github.io/Daylight-Saving-Time-Converter/sitemap.xml
