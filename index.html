@@ -249,21 +249,21 @@
 		const phoenixZone = "America/Phoenix";
 
 		const sourceDate = DateTime.fromObject(
-			{ year: 2024, month: 1, day: 15, hour: h, minute: m },
+			{ year: 2025, month: 1, day: 15, hour: h, minute: m },
 			{ zone: fromZone }
 		);
 
 		const winter = sourceDate.setZone(phoenixZone).toJSDate();
 
 		const summer = DateTime.fromObject(
-			{ year: 2024, month: 7, day: 15, hour: h, minute: m },
+			{ year: 2025, month: 7, day: 15, hour: h, minute: m },
 			{ zone: fromZone }
 		)
 		.setZone(phoenixZone)
 		.toJSDate();
 
 		const inputDisplay = DateTime.fromObject(
-			{ year: 2024, month: 1, day: 1, hour: h, minute: m },
+			{ year: 2025, month: 1, day: 15, hour: h, minute: m },
 			{ zone: fromZone }
 		).toFormat("h:mm a");
 
