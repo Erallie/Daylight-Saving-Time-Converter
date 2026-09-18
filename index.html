@@ -266,7 +266,8 @@
 		.setZone(phoenixZone)
 		.toJSDate();
 
-		const isSouthern = window.isSouthernHemisphereTimezone(fromZone);
+		const localZone = DateTime.local().zoneName;
+		const isSouthern = window.isSouthernHemisphereTimezone(localZone);
 		const winter = isSouthern ? marchToNovember : novemberToMarch;
 		const summer = isSouthern ? novemberToMarch : marchToNovember;
 
@@ -287,7 +288,7 @@
 		const winterBox = document.getElementById("winterBox");
 		const summerBox = document.getElementById("summerBox");
 
-		const currentMonth = DateTime.now().setZone(fromZone).month;
+		const currentMonth = DateTime.now().month;
 		const isMarchToNovember = currentMonth >= 3 && currentMonth < 11;
 		const activeSeason = isSouthern
 			? (isMarchToNovember ? "winter" : "summer")
