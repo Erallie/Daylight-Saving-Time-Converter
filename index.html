@@ -23,6 +23,7 @@
 	<meta name="twitter:image" content="/banner-image-5.webp" />
 
 	<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+	<script src="timezone-hemispheres.js"></script>
 
     <link rel="canonical" href="https://dst.gozarproductions.com/">
 
@@ -202,12 +203,12 @@
     <div class="divider">– Converts to –</div>
     <div class="output">
         <div class="section" id="winterBox">
-            <div class="label">Local time in Winter (Nov–Mar)</div>
+            <div class="label" id="winterLabel">Local time in Winter (Nov–Mar)</div>
             <div class="value" id="winter"></div>
         </div>
 
         <div class="section" id="summerBox">
-            <div class="label">Local time in Summer (Mar–Nov)</div>
+            <div class="label" id="summerLabel">Local time in Summer (Mar–Nov)</div>
             <div class="value" id="summer"></div>
         </div>
     </div>
@@ -248,19 +249,23 @@
 
 		const phoenixZone = "America/Phoenix";
 
-		const sourceDate = DateTime.fromObject(
+		const novemberToMarch = DateTime.fromObject(
 			{ year: 2025, month: 1, day: 15, hour: h, minute: m },
 			{ zone: fromZone }
-		);
+		)
+		.setZone(phoenixZone)
+		.toJSDate();
 
-		const winter = sourceDate.setZone(phoenixZone).toJSDate();
-
-		const summer = DateTime.fromObject(
+		const marchToNovember = DateTime.fromObject(
 			{ year: 2025, month: 7, day: 15, hour: h, minute: m },
 			{ zone: fromZone }
 		)
 		.setZone(phoenixZone)
 		.toJSDate();
+
+		const isSouthern = window.isSouthernHemisphereTimezone(fromZone);
+		const winter = isSouthern ? marchToNovember : novemberToMarch;
+		const summer = isSouthern ? novemberToMarch : marchToNovember;
 
 		const inputDisplay = DateTime.fromObject(
 			{ year: 2025, month: 1, day: 15, hour: h, minute: m },
@@ -269,18 +274,26 @@
 
 		document.getElementById("input").innerText = inputDisplay;
 		document.getElementById("inputLabel").innerText = `Time for ${fromZone}`;
+		document.getElementById("winterLabel").innerText =
+			`Local time in Winter (${isSouthern ? "Mar–Nov" : "Nov–Mar"})`;
+		document.getElementById("summerLabel").innerText =
+			`Local time in Summer (${isSouthern ? "Nov–Mar" : "Mar–Nov"})`;
 		document.getElementById("winter").innerText = formatTime(winter);
 		document.getElementById("summer").innerText = formatTime(summer);
 
-		function getActiveSeason() {
-			const month = new Date().getMonth() + 1;
-			return (month >= 3 && month < 11) ? "summer" : "winter";
-		}
+		const winterBox = document.getElementById("winterBox");
+		const summerBox = document.getElementById("summerBox");
 
-		if (getActiveSeason() === "winter") {
-			document.getElementById("winterBox").classList.add("active");
+		const currentMonth = DateTime.now().setZone(fromZone).month;
+		const isMarchToNovember = currentMonth >= 3 && currentMonth < 11;
+		const activeSeason = isSouthern
+			? (isMarchToNovember ? "winter" : "summer")
+			: (isMarchToNovember ? "summer" : "winter");
+
+		if (activeSeason === "winter") {
+			winterBox.classList.add("active");
 		} else {
-			document.getElementById("summerBox").classList.add("active");
+			summerBox.classList.add("active");
 		}
 	}
 </script>
