@@ -12,10 +12,11 @@
 		body {
             margin: 0;
             min-height: 100vh;
+            min-height: 100dvh;
             padding: 15px;
             box-sizing: border-box;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             background: #0f0f0f;
             color: white;
@@ -28,7 +29,9 @@
             border-radius: 12px;
             width: 100%;
             max-width: 550px;
+            min-width: 0;
             box-sizing: border-box;
+            margin-block: auto;
         }
 
 		h2 {
@@ -52,7 +55,7 @@
 			box-sizing: border-box;
 		}
 
-		input[type="time"],
+		.time-input-shell,
 		select {
 			padding: 10px;
 			border: none;
@@ -60,6 +63,22 @@
 			background: #2a2a2a;
 			color: white;
 			font-size: 16px;
+			box-sizing: border-box;
+		}
+
+		.time-input-shell {
+			width: 100%;
+		}
+
+		input[type="time"] {
+			display: block;
+			min-width: 0;
+			max-width: 100%;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			color: white;
+			font: inherit;
 		}
 
 		select {
@@ -188,7 +207,9 @@
 
 	<div class="field">
 		<label for="time">Time</label>
-		<input type="time" id="time" value="13:00">
+		<div class="time-input-shell">
+			<input type="time" id="time" value="13:00">
+		</div>
 	</div>
 
 	<div class="field">
