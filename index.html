@@ -288,11 +288,7 @@
 		const winterBox = document.getElementById("winterBox");
 		const summerBox = document.getElementById("summerBox");
 
-		const currentMonth = DateTime.now().month;
-		const isMarchToNovember = currentMonth >= 3 && currentMonth < 11;
-		const activeSeason = isSouthern
-			? (isMarchToNovember ? "winter" : "summer")
-			: (isMarchToNovember ? "summer" : "winter");
+		const activeSeason = DateTime.local().isInDST ? "summer" : "winter";
 
 		if (activeSeason === "winter") {
 			winterBox.classList.add("active");
