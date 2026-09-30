@@ -220,7 +220,7 @@
 </div>
 
 <script>
-	const { DateTime } = luxon;
+	const { DateTime, Info } = luxon;
 
 	const params = new URLSearchParams(window.location.search);
 	const hasTimezone = params.has("tz") && params.get("tz").trim() !== "";
@@ -288,7 +288,38 @@
 		const winterBox = document.getElementById("winterBox");
 		const summerBox = document.getElementById("summerBox");
 
-		const activeSeason = DateTime.local().isInDST ? "summer" : "winter";
+		const now = DateTime.local();
+		const isMarchToNovember = now.month >= 3 && now.month < 11;
+		const calendarSeason = isSouthern
+			? (isMarchToNovember ? "winter" : "summer")
+			: (isMarchToNovember ? "summer" : "winter");
+
+		let activeSeason;
+
+		if (Info.hasDST(localZone)) {
+			activeSeason = now.isInDST ? "summer" : "winter";
+		} else if (Info.hasDST(fromZone)) {
+			const sourceNow = now.setZone(fromZone);
+			const sourceJanuary = DateTime.fromObject(
+				{ year: sourceNow.year, month: 1, day: 15, hour: 12 },
+				{ zone: fromZone }
+			);
+			const sourceJuly = DateTime.fromObject(
+				{ year: sourceNow.year, month: 7, day: 15, hour: 12 },
+				{ zone: fromZone }
+			);
+
+			if (sourceJanuary.isInDST !== sourceJuly.isInDST) {
+				const usesJanuaryPattern = sourceNow.isInDST === sourceJanuary.isInDST;
+				activeSeason = isSouthern
+					? (usesJanuaryPattern ? "summer" : "winter")
+					: (usesJanuaryPattern ? "winter" : "summer");
+			} else {
+				activeSeason = calendarSeason;
+			}
+		} else {
+			activeSeason = calendarSeason;
+		}
 
 		if (activeSeason === "winter") {
 			winterBox.classList.add("active");
